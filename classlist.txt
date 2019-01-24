@@ -1,0 +1,64 @@
+Class List
+
+High School (Iowa Central Community College)
+-Calculus 1
+-Statistics
+-Human Anatomy & Physiology
+-Comp 1
+-Comp 2
+-Speech
+
+Freshman (University of Iowa)
+Fall:
+-Engineering Problem Solving I
+-Engineering Problem Solving II
+-Engineering Math I: Single Variable Calculus
+-Principles of Chemistry I
+-Engineering Success for First-Year Students
+Spring:
+-Computers in Engineering
+-Engineering Math II: Multivariable Calculus
+-Engineering Math III: Matrix Algebra
+-Introductory Physics I
+-Statics (Dropped)
+
+Sophomore (University of Northern Iowa)
+Fall:
+-History of the United States
+-Linear Algebra
+-Computer Organization
+-Data Structures
+-Discrete Structures
+Spring:
+-Religions of the World
+-Humanities 1
+-Computational Biology
+-Intermediate Computing
+-Theory of Computation
+Summer:
+-World Geography (Online)
+-Humanities 3 (Online)
+
+Junior (UNI)
+Fall:
+-Africa
+-Project Management
+-User Interface Design
+-Translation of Programming Languages
+-Artificial Intelligence
+-Networking
+Spring:
+-Software Engineering
+-Programming Languages & Paradigms
+-Intelligent Systems
+-Soundscapes (Online)
+-French 1
+-DWB Lecture (Online)
+
+Senior (UNI)
+Summer:
+-Capstone in France: Building Cross-Cultural Bridges
+Fall:
+-Real-Time Embedded Systems
+-DWB Lab
+-Undergraduate Research in Computer Science

@@ -1,0 +1,96 @@
+Part B
+					 							3. What is the IP address, MAC address, and port number of the client?
+	IP Address: 192.168.0.2
+	MAC Address: 00:a0:cc:3b:bf:fa
+	Port Number: 1254
+4. What is the IP address, MAC address, and port number of the telnet server?
+IP Address: 192.168.0.1
+MAC Address: 00:00:c0:9f:a0:97
+Port Number:	 23
+5. What is the operating system of the telnet server? (Hint, you find this information transferred through the telnet protocol.) 
+	OpenBSD, The proactively secure Unix-like operating system.
+
+6. What is the user’s username and password? 
+	Username: fake
+	Password: user
+
+7. What commands does the user issue before exiting the server?			
+-	$ ls
+-	$ ls -a
+-	$ /sbin/ping www.yahoo.com
+
+Part C
+8. Please describe what is happening for each packet in the trace. Please include 
+(a) which computer is sending the packet (client or dhcp server)
+(b) where the packet is directed
+(c) a description of the purpose of the dhcp packet. For (c), don't just copy what's in the info column (e.g. DHCP discover), but also tell me what that means with the dhcp protocol.
+Packet 1
+a.	The client is sending a packet called DHCP Discover
+b.	The packet is directed toward the DHCP Server (255.255.255.255)
+c.	This packet is sent from the client to the to initialize the connection. This message is called DHCP Discover which gives the server the client’s computer name and the MAC Address, and the message is basically asking for a DHCP server who can lease its IP Address
+Packet 2
+a.	The DHCP server is sending a packet to the client
+b.	The packet is directed toward the client
+c.	This packet is sent from the server to the client to tell them that the server has an IP address available to lease to them. This is called the DHCP Offer message.
+Packet 3
+a.	The Client is sending a packet to the DHCP server
+b.	The packet is directed toward the DHCP Server
+c.	This packet is sent from the client to the server where the client is broadcasting a DHCP Request message. This is saying that it accepts the DHCP Offer message and says that it wants an IP Address. 
+Packet 4
+a.	The DHCP Server is sending a message to the client
+b.	The packet is directed toward the client
+c.	This packet is the DHCP Packet message which acknowledges that the client accepted the lease and it sends a packet with the client’s IP Address
+9. What is the transport protocol being used? How can you tell?
+-	This is the “DHCP” protocol. We can tell because each message is named DHCP Discover, Offer, Request, and ACK. These names indicate the general order in which DHCP servers act.
+10. What is the IP address, MAC address, and the port of the DHCP server?
+-	IP Address - 192.168.0.1
+-	MAC Address - 00:08:74:ad:f1:9b
+-	Port - 67
+11. Why does the client initially have an IP address of 0.0.0.0?
+-	This request is for the client to get an IP Address from the DHCP Server, so the client would not have an IP Address to begin with if it needs to get one.
+
+Part D
+13. The first two packets in the trace show a DNS lookup. What is the IP address of the DNS server, and what hostname is the query trying to resolve?
+-	IP Address - 10.10.1.1
+-	Hostname - mail.patriots.in
+14. The client is attempting to send some mail. To which email address is mail being sent? From which email address is mail being sent?
+-	TO: raj_deol2002in@yahoo.co.in
+-	FROM: gurpartap@patriots.in 
+15. The client enters some data into the body of the email message, but it is too large to fit into one packet. The packets are fragmented, and Wireshark shows the reassembled frame later in the trace. In which Wireshark frame number is the packet reassembled? How many data fragments are reassembled?
+-	Data is reassembled in frame 45
+-	14 Data fragments are reassembled
+16. In which ways does the exchange between the client and SMTP server differ from the example commands to use an SMTP server in the presentation on 9/5 (session six) slide numbers 13-14?
+-	The commands used in the Wireshark frames are used for an “enhanced/extended” SMTP server (EHLO instead of HELO). These commands require an authentication login and it uses BASE64 encoding to keep the password and username safe. These functionalities compare to the regular SMTP commands in which the user email has to be specified with MAIL FROM and it can send to any user. 
+17. (This question is tricky.) What kind of file is being attached to the email?
+-	SMTP PCAP file. I believe this is it because the message sent included this quote “I sent u smtp pcap file”
+18. What is the IP address and TCP port number used by the client computer (source) that is transferring the file to gaia.cs.umass.edu?
+-	IP: 192.168.1.102
+-	Port Num: 1161
+19. What is the IP address of host name of the server? On what port number is it sending and receiving TCP segments for this connection?
+-	IP of Host Name: 128.119.245.12
+-	TCP Port Num: 80
+20. What is the sequence number of the TCP segment containing the HTTP POST command? Note that in order to find the POST command, you’ll need to dig into the packet content field at the bottom of the Wireshark window, looking for a segment with a “POST” within its DATA field. Is this a relative or actual sequence number? What does relative mean in this context?
+-	Sequence number 1 contains the HTTP POST command.
+-	This is a relative sequence number
+-	This gives the current sequence number’s relative location to the beginning of the data. The HTTP POST command is the 1st byte sent at the moment it is recorded in Wireshark, when in reality, the actual sequence number is 232129013
+
+21. (6pts) Consider the TCP segment containing the HTTP POST as the first segment in the TCP connection. What are the sequence numbers of the first six segments in the TCP connection (including the segment containing the HTTP POST)? At what time was each segment sent? When was the ACK for each segment received? Given the difference between when each TCP segment was sent, and when its acknowledgement was received, what is the RTT value for each of the six segments? Finally, find the Estimated RTT and Timeout for segments 2-6 using the adaptive retransmission algorithm found on slide 23 of the powerpoint lecture on 11/14 where α=0.125. You may want to make a table like this:		
+(Hint: What should we make our timeout value? It needs to be a bit longer than the EstRTT. For this example, let’s make the timeout value be twice the Estimated RTT.)
+
+EstimatedRTT = (1-0.125 )*EstimatedRTT + 0.125*SampleRTT
+
+seq	Time sent	Time ack rcvd	RTT	EstRTT	Timeout
+1	0.026477	0.053937	0.02746	0.02746	N/A
+556	0.041737	0.077294	0.035557	0.028472	0.056944
+2026	0.054026	0.124085	0.070059	0.033670	0.067341
+3486	0.054690	0.169118	0.114428	0.043765	0.087530
+4946	0.077405	0.217299	0.139894	0.055781	0.111562
+6406	0.078157	0.267802	0.189645	0.072514	0.145028
+
+
+22. (6 pts)What is the overall throughput for the TCP connection for the first 100KB of the upload? Throughput is the number of bytes transferred divided by the amount of time it took to transmit. (Hint: Find the time when the next packet after 100,584 bytes (~100KB) is transmitted and subtract the time when the first packet was transmitted to get the total transmit time. Divide the number of bytes by the number of seconds to get the throughput in bytes/second. Now find the number in Mb/sec.)
+-	
+24. Please identify where TCP’s slowstart phase begins and ends and where congestion avoidance takes over. Where congestion avoidance takes over, what is the average sending window size (where the sending window size is the same as the number of packets sent at one time)?
+-	Slowstart is frame 1 to 5
+-	congestion starts at line 6
+-	Average frame is 1540
