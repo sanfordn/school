@@ -1,0 +1,7 @@
+program prints_false();
+begin
+    return if 4 < 2 then
+                true
+            else
+                false
+end.

@@ -1,0 +1,26 @@
+program IsPrime(n : integer);
+
+    function MOD( n : integer, divisor : integer ) : integer
+    begin
+
+        return divisor - divisor/n * n
+    end;
+
+    function isPrime( n : integer , divisor : integer ) : boolean
+    begin
+        return if divisor = 1 then
+            true
+        else if MOD( n, divisor) = 0 then
+            false
+        else
+            isPrime( n, divisor-1)
+    end;
+
+
+begin
+
+    return if isPrime(n, n-1) then
+        1
+    else
+        0
+end.
