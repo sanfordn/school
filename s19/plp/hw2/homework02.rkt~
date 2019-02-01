@@ -1,0 +1,72 @@
+;;
+;; FILE:     homework02.rkt
+;; AUTHOR:   YOUR NAME
+;; DATE:     YOUR DATE
+;; COMMENT:  Provides templates for your solutions, plus a few tests.
+;;
+;; MODIFIED: 
+;; CHANGE:   
+;;
+
+#lang racket
+(require rackunit)      ; enables you to use rackunit tests
+
+; -------------------
+; -----   [1]   -----
+; -------------------
+
+(define price-per-ounce
+  (lambda (units-per-pack ounces-per-unit pack-price)
+    0 ))                ; replace the 0 with your code
+
+(check-equal? (price-per-ounce 6 24   1.44) 0.01)
+(check-equal? (price-per-ounce 6 16.9 1.44) 0.014201183431952664)
+
+; -------------------
+; -----   [2]   -----
+; -------------------
+
+(define ladder-height
+  (lambda (ladder-length base-distance)
+    0 ))                ; replace the 0 with your code
+
+(check-equal? (ladder-height 10 6)   8)
+(check-equal? (ladder-height 13 5)   12)
+(check-equal? (ladder-height 20 3.5) 19.691368667515217)
+
+; -------------------
+; -----   [3]   -----
+; -------------------
+
+(define candy-temperature
+  (lambda (temp elevation)
+    0 ))                ; replace the 0 with your code
+
+; write your own check-equal? tests for the three examples
+
+; -------------------
+; -----   [4]   -----
+; -------------------
+
+(define in-range?
+  (lambda (actual desired epsilon)
+    #f ))               ; replace the #f with your code
+
+(check-equal? (in-range? 4.95 5.0 0.1)  #t)
+(check-equal? (in-range? 4.95 5.0 0.01) #f)     ;; not anymore!
+(check-equal? (in-range? 5.0 4.95 0.1)  #t)     ;; works both ways
+(check-equal? (in-range? 5.0 5.95 0.1)  #f)
+(check-equal? (in-range? 5.5 5.95 0.5)  #t)
+
+; -------------------
+; -----   [5]   -----
+; -------------------
+
+(define body-mass-index
+  (lambda (height weight)
+    0 ))                ; replace the 0 with your code
+
+; write your own check-equal? tests for the two examples given
+; plus at least one more test of your own design
+
+; -----   end   -----
