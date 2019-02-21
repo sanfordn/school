@@ -1,0 +1,51 @@
+;;
+;; FILE:     homework04.rkt
+;; AUTHOR:   YOUR NAME
+;; DATE:     YOUR DATE
+;; COMMENT:  This module defines the five functions specified in
+;;           Homework 4 as an importable module.
+;;
+;; MODIFIED: 
+;; CHANGE:   
+;;
+
+#lang racket
+(require rackunit)      ; enables you to use rackunit tests
+(provide string*        ; exports your functions to client code
+         collect        ;      You must define a function with
+         drop           ;      each name, even if the function
+         digit-sum      ;      only returns a default value!
+         positions-of)
+
+;; --------------------------------------------------------------------------
+;; Problem 1                                              (counted recursion)
+;; --------------------------------------------------------------------------
+
+'YOUR-CODE-HERE
+
+;; --------------------------------------------------------------------------
+;; Problem 2                                           (structural recursion)
+;; --------------------------------------------------------------------------
+
+'YOUR-CODE-HERE
+
+;; --------------------------------------------------------------------------
+;; Problem 3                                              (counted recursion)
+;; --------------------------------------------------------------------------
+
+'YOUR-CODE-HERE
+
+;; --------------------------------------------------------------------------
+;; Problem 4                                           (structural recursion)
+;; --------------------------------------------------------------------------
+
+'YOUR-CODE-HERE
+
+;; --------------------------------------------------------------------------
+;; Problem 5                   (structural recursion and interface procedure)
+;; --------------------------------------------------------------------------
+
+'YOUR-CODE-HERE
+
+;; --------------------------------------------------------------------------
+

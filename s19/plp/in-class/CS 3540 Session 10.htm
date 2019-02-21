@@ -1,0 +1,794 @@
+
+<!-- saved from url=(0072)http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session10.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title> CS 3540 Session 10 </title>
+
+</head><body bgcolor="#FFFFFF">
+
+<hr>
+<h2 align="center"> Session 10                           </h2>
+<h3 align="center"> Recursive Programming Patterns       </h3>
+<hr>
+<h4 align="center"> CS 3540                              <br>
+                    Programming Languages and Paradigms  </h4>
+<hr>
+
+     <a name="warm-up"></a>
+<h3> A Warm-Up Exercise </h3>
+
+<p> Some students do not read documentation or instructions.
+    (Present company excluded, of course.)  As a result, they write
+    functions that already exist, sometimes under a different name.
+    That's not even always a bad thing...  Perhaps it's better to
+    use your time practicing than poking around documentation.  </p>
+
+<table border="1" cellpadding="15" cellspacing="5" style="float: right; margin-left: 3em; margin-right: 1em;">
+<tbody>
+<tr><td>
+<p align="right">
+   <em>"In order to install Windows <br> Updates, you must <!--BR/-->
+        first install <br> an update for Windows Update."</em>  <br> <br>
+   -- recursive poetry from Microsoft </p>
+    </td></tr>
+</tbody>
+</table>
+
+<p> Write a Racket function <b><tt>(nth lst n)</tt></b>, where
+    <tt>lst</tt> is a list and <tt>n</tt> is a non-negative
+    integer.  <b><tt>nth</tt></b> returns the symbol in position
+    <tt>n</tt> of <tt>lst</tt>.  For example:
+</p><pre>    &gt; (nth '(a b c) 2)
+    'c
+    &gt; (nth '(d c b a z) 1)
+    'c
+    &gt; (nth (range 1 1000) 41)
+    42
+    &gt; (nth '(d c b a z) 10)
+    <font color="#FF0000">nth: no such position</font>
+</pre>  <p></p>
+
+<p> Make the position 0-based.  If <tt>n</tt> is too big for the
+    list, return an error message as a string.  </p>
+<br>
+<hr>
+
+     <a name="warm-up-solution"></a>
+<h3> A Solution for <tt>nth</tt> </h3>
+
+<p> Check out a candidate solution in
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session10/session10-01.rkt">
+       this source file</a>.
+    This is a fine example of using
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#structural-recursion">
+       structural recursion</a>
+    to process an inductively-defined datatype.  As we have seen,
+    a Racket list can be defined inductively as:
+</p><pre>    &lt;list&gt; ::= ()
+             | (&lt;any&gt; . &lt;list&gt;)
+</pre>
+    Racket even has a built-in predicate for the "any" datatype,
+    named
+    <a href="https://docs.racket-lang.org/reference/data-structure-contracts.html#%28def._%28%28lib._racket%2Fcontract%2Fprivate%2Fmisc..rkt%29._any%2Fc%29%29">
+       <tt>any/c</tt></a>.
+    We don't need it here, because we don't operate on the items
+    in the list; we only return one of them.  <p></p>
+
+<p> Note a few things...  First, even though there is a nested
+    <tt>if</tt> expression in the code, we consider only
+     <em>two</em> cases of the list argument: it is either the
+    empty list or a pair.  The second <tt>if</tt> helps us solve
+    the pair case: Is this the item we are looking for?  Try to
+    think clearly about the different parts of the problem.  That
+    will help you make sense of when you need another choice, and
+    why.  </p>
+
+<p> Second, we do not need
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#interface">
+       an interface procedure</a>
+    to solve this problem.  Unlike <tt>annotate</tt> last time,
+    this function requires that users pass an integer argument.
+    We can use it to simulate a loop by counting down to zero in
+    parallel with walking down the list.  </p>
+
+<p> Third, if the second argument were a symbol and we needed to
+    return the position of the first occurrence, then we would
+    need an interface procedure.  That is
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/homework/homework04.html#positions-of">
+       Problem 5</a>
+    on Homework 4!  </p>
+
+<p> <tt>nth</tt> is an implementation of Racket's primitive
+    <a href="https://docs.racket-lang.org/reference/pairs.html#%28def._%28%28quote._~23~25kernel%29._list-ref%29%29">
+       <tt>list-ref</tt></a>
+    function.  You can find
+    <a href="https://docs.racket-lang.org/reference/pairs.html">
+       many other functions for working with lists</a>
+    in the Racket docs.  Most of them are also great exercises
+    for practicing your recursive programming skills!  </p>
+
+<p> My solution uses Racket's primitive
+    <a href="https://docs.racket-lang.org/reference/exns.html#%28def._%28%28quote._~23~25kernel%29._error%29%29">
+       <tt>error</tt> function</a>.
+    Feel free to use it whenever a function has an error case.
+    (Notice that we can test our error cases, using another test
+    feature of Rackunit.)  </p>
+<br>
+<hr>
+
+<h3> Writing Recursive Programs </h3>
+
+<table border="1" cellpadding="5" cellspacing="5" style="float: right; margin-left: 3em; margin-right: 1em; margin-bottom: 1em;">
+<tbody>
+<tr><td>
+    <img src="./CS 3540 Session 10_files/recursive-web-page.png" alt="a web page about a web page about a web page..." width="400" align="right">
+    </td></tr>
+<tr><td>
+    <center>
+    <a href="http://en.wikipedia.org/wiki/Web_page">
+       a web page about a web page</a>
+    <br> about a web page about a web page... <br>
+    </center>
+    </td></tr>
+</tbody>
+</table>
+
+<p> Writing recursive functions well and confidently requires you
+    to know several techniques, just as writing loops does.  Last
+    session, we explored the basic technique for writing recursive
+    programs, the technique on which we base all of our recursive
+    functions:
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#structural-recursion">
+       structural recursion</a>.
+    With this technique, we mimic the structure of an inductive data
+    specification in the code that processes the data.  </p>
+
+<p> We then introduced a second technique,
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#interface">
+       the interface procedure</a>,
+    that hides implementation detail and allows us to preserve the
+    argument signature specified for a function.  Interface
+    procedures are necessary whenever we find that we need a piece
+    of data on each recursive call that is not provided by the
+    original caller of the function.  </p>
+
+<p> This is a common occurrence in Racket.  We encounter it
+    frequently when processing vectors, which require positional
+    access to values.  </p>
+
+<p> This session continues our discussion of recursive programming
+    by introducing two new techniques: <b>mutual recursion</b> and
+    <b>program derivation</b>.  These techniques also help us to do
+    structural recursion in the face of specific circumstances that
+    we commonly encounter.  </p>
+<br>
+<hr>
+
+     <a name="subst"></a>
+     <a name="s-list"></a>
+<h3> A New Wrinkle: <tt>subst</tt> </h3>
+
+<p> Last session, we defined two functions,
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#remove-first">
+       <tt>remove-first</tt></a>
+    and
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#remove">
+       <tt>remove</tt></a>,
+    over lists of symbols.  <em>List of symbols</em> is the data type
+    on which they operate, and we had an inductive definition for the
+    type that guided our work.  Today, let's consider a more complex
+    data structure, one that will be of great use to us when we write
+    programs to process languages: the <b>s-list</b>.  The difference
+    between a list of symbols and an s-list is that the elements of
+    the list can themselves be s-lists.  </p>
+
+<p> Here is the BNF notation for an s-list:
+</p><pre>               &lt;s-list&gt; ::= ()
+                          | (&lt;symbol-expression&gt; . &lt;s-list&gt;)
+
+    &lt;symbol-expression&gt; ::= &lt;symbol&gt; 
+                          | &lt;s-list&gt; 
+</pre> <p></p>
+
+<p> And here are some examples:
+</p><pre>       ()                           (())
+       (a)                          ((a) b)
+       (a b c)                      (a (b) c)
+       (a b c d)                    (if (zero? n) zero (/ total n))
+       (a b c d e f g h)            (cons (foo (car x)) (foo-cdr (cdr x)))
+</pre> <p></p>
+
+<p> The items on the left are lists of symbols, but they are also
+    s-lists.  A <tt>symbol-expression</tt> can be a symbol, or an
+    s-list.  </p>
+
+<p> Let's define a function, <tt>subst</tt>, that substitutes one
+    symbol for another anywhere in an s-list.  You can think of
+    this as like a global "search and replace" operation.  For
+    example, when applied to a program, <tt>subst</tt> can serve
+    as the foundation of an operation for renaming variables -- a
+    common refactoring that all programmers do.  </p>
+
+<p> This function takes three arguments: the new symbol, the old
+    symbol, and an s-list to operate on:
+</p><pre>    &gt;  (subst 'd 'b '(a b c a b c d))
+    (a <b><u>d</u></b> c a <b><u>d</u></b> c d)
+
+    &gt; (subst 'a 'b '((a b) (((b g r) (f r)) c (d e)) b))
+    ((a <b><u>a</u></b>) (((<b><u>a</u></b> g r) (f r)) c (d e)) <b><u>a</u></b>)
+</pre> <p></p>
+
+<p> Following the principle of structural recursion, the structure
+    of <tt>subst</tt> should follow the structure of the BNF
+    specification for an s-list:
+</p><pre>    (define subst
+       (lambda (new old slist) 
+          (if (null? slist)
+              ;; handle the empty list
+              ;; handle a pair containing a symbol-expression
+              )))
+</pre> <p></p>
+
+<p> If <tt>slist</tt> is empty, there are nothing occurrences of
+    <tt>old</tt> to substitute, and the answer is the empty list.
+</p><pre>    (define subst
+       (lambda (new old slist) 
+          (if (null? slist)
+              '()
+              ;; handle a pair containing a symbol-expression
+              )))
+</pre> <p></p>
+
+<p> The second arm of our BNF definition defines a case where
+    <tt>slist</tt> is a pair with the form
+    <tt>(&lt;symbol-expression&gt; . &lt;s-list&gt;)</tt>.  The
+    result of <tt>subst</tt> will be the result of substituting
+    <tt>new</tt> for <tt>old</tt> in both parts, the
+    <tt>&lt;symbol-expression&gt;</tt> and the
+    <tt>&lt;s-list&gt;</tt>.  </p>
+
+    <a name="the-choice"></a>
+<p> The first element of the pair is a <tt>symbol-expression</tt>.
+    Note, however, that <tt>symbol-expression</tt> is also defined
+    in terms of a choice.  Our natural inclination might be to
+    implement this choice with a conditional expression.  There
+    are two alternatives: the first element is a symbol, or it is
+    an s-list.
+</p><pre>    (define subst
+       (lambda (new old slist) 
+          (if (null? slist)
+              '()
+              (if (symbol? (first slist))
+                  ;; handle a symbol in the first, then the slist in the rest
+                  ;; handle an slist in the first, then the slist in the rest
+                  ))))
+</pre> <p></p>
+
+<p> We have to return a list with the same structure as our input, so
+    in both cases we <tt>cons</tt> the result from the <tt>first</tt>
+    into the result from the <tt>rest</tt>.
+</p><pre>    (define subst
+       (lambda (new old slist) 
+          (if (null? slist)
+              '()
+              (if (symbol? (first slist))
+                  (cons ;; handle symbol in first ;; handle slist in rest)
+                  (cons ;; handle slist in first  ;; handle slist in rest)
+                  ))))
+</pre> <p></p>
+
+<p> If it is a symbol, we must determine whether or not to replace
+    it with <tt>new</tt>.   We replace the symbol if it is equal to
+    <tt>old</tt>, and otherwise we leave it alone:
+</p><pre>    (define subst
+       (lambda (new old slist)
+          (if (null? slist)
+              '()
+              (if (symbol? (first slist))
+                  (if (eq? (first slist) old)
+                      (cons new           ;; handle the slist in the rest )
+                      (cons (first slist) ;; handle the slist in the rest )
+                  ;; handle an slist in the first, then the slist in the rest
+                  ))))
+</pre> <p></p>
+
+<p> In both of these cases, we need to substitute <tt>new</tt> for
+    <tt>old</tt> in the <tt>rest</tt> of the list.  The
+    <tt>rest</tt> is an s-list, so we can use <tt>subst</tt> to
+    compute that part of our result.
+</p><pre>    (define subst
+       (lambda (new old slist)
+          (if (null? slist)
+              '()
+              (if (symbol? (first slist))
+                  (if (eq? (first slist) old)
+                      (cons new           (subst new old (rest slist)))
+                      (cons (first slist) (subst new old (rest slist)))  )
+                  ;; handle an slist in the first, then the slist in the rest
+                  ))))
+</pre>  <p></p>
+
+     <a name="subst-v1"></a>
+<p> The only thing left to do is to decide what to do when the
+    first member of <tt>slist</tt> is not a symbol.  In that case,
+    it is an s-list. We are in luck.  We already have a function
+    for substituting symbols in s-lists.  It is the function that
+    we are writing, <tt>subst</tt>!  So, we can:
+    </p><ul>
+    <li> substitute <tt>new</tt> for <tt>old</tt> in the
+         <tt>first</tt> of the list, </li>
+    <li> substitute <tt>new</tt> for <tt>old</tt> in the
+         <tt>rest</tt> of the list, and </li>
+    <li> construct a new pair consisting of these two results.  </li>
+    </ul>
+    The code looks like this:
+<pre>    (define subst
+       (lambda (new old slist) 
+          (if (null? slist)
+              '()
+              (if (symbol? (first slist))
+                  (if (eq? (first slist) old)
+                      (cons new (subst new old (rest slist)))
+                      (cons (first slist)
+                            (subst new old (rest slist)))  )
+                  (cons (subst new old (first slist))
+                        (subst new old (rest slist)))))))
+</pre> <p></p>
+
+<p> And we are done, or at least with we have a working solution.
+    Our basic structural recursion technique has served us well.  </p>
+
+    <blockquote>
+    <em>Programming Aside</em>:  Notice how the indentation of this
+    code makes the control structures we are using as clear as
+    possible.  Whenever you write a program -- especially in a
+    language like Racket (with a uniform syntax (and so (many)
+    function calls!)) -- you should strive to <b>write code that
+    tells us how to read itself</b>.
+    </blockquote>
+<br>
+<hr>
+
+     <a name="wrinkle"></a>
+<h3> The Wrinkles </h3>
+
+<p> Our function works but, if we are honest with ourselves, we must
+    admit that it has a couple of weaknesses.  </p>
+
+<p> First, we have repeated the expression
+    <tt>(subst new old (rest slist))</tt> three times, including
+    <i>twice</i> in the same arm of the main <tt>if</tt> expression.
+    We know that repeated code can cause all sorts of problems in
+    maintenance.  But having to write these expressions separately
+    also makes it hard for us to write the function in the first
+    place.  A mistake, even a typo, in any of the expressions will
+    break our function.  Besides, all the repetition makes the code
+    harder to read.  </p>
+
+<p> Second, it is not really faithful to the structure suggested by
+    the BNF.  Look at the definition of an s-list again:
+</p><pre>               &lt;s-list&gt; ::= ()
+                          | (&lt;symbol-expression&gt; . &lt;s-list&gt;)
+
+    &lt;symbol-expression&gt; ::= &lt;symbol&gt; 
+                          | &lt;s-list&gt; 
+</pre>  <p></p>
+
+<p> Structural recursion tells us that the structure of our code
+    should reflect the structure of the data.  <em>Our code does
+    not</em>.  There are two BNF expressions in the data
+    definition, but we have written only one function!  </p>
+
+<p> The second weakness causes the first.  By not following the
+    data structure, we have created extra cases to solve, which
+    requires us to duplicate code.  </p>
+
+<p> If you look back at the step-by-step evolution of our
+    function, you will see a clue hinting at this second weakness.
+    We had to leave ourselves detailed notes using comments so
+    that we did not lose our place as we solved small parts of
+    the problem.  Those comments are a sign that we are managing
+    a lot of complexity in our heads.  But the data type we are
+    processing is not that complex!  </p>
+
+<p> My running commentary does more than give us a clue about when
+    we went off track.  It tells us
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session10.html#the-choice">
+       exactly where</a>: </p>
+
+    <blockquote><em>
+    The first element of the pair is a <tt>symbol-expression</tt>.
+    Note, however, that <tt>symbol-expression</tt> is also defined
+    in terms of a choice.  <b>Our natural inclination might be to
+    implement this choice with a conditional expression. </b>.  ...
+    </em></blockquote>
+
+<p> A better way to reflect the choice between kinds of symbol
+    expression would be to
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session09.html#structural-recursion">
+       follow the data definition</a>.
+    An s-list is defined in terms of symbol expression, and a symbol
+    expression is defined in terms of s-list.  We say that such data
+    types are <b>mutually inductive</b>.  We'd like for our code to
+    show this relationship, too.  </p>
+
+<p> Patterns that show up in data should probably show up in the
+    code that processes the data.  (And in the languages we use to
+    write the code...)  </p>
+<br>
+<hr>
+
+     <a name="mutual-recursion"></a>
+<h3> Mutual Recursion: A Better <tt>subst</tt> </h3>
+
+<table border="0" cellpadding="5" cellspacing="5" style="float: right; margin-left: 3em; margin-right: 1em;">
+<tbody><tr><td>
+    <img src="./CS 3540 Session 10_files/escher-hands.gif" alt="M.C. Escher, &#39;Hands&#39;" align="right" width="250">
+</td></tr></tbody>
+</table>
+
+<p> For our program structure to follow the pattern of the BNF,
+    we must define a function for substituting symbols in
+    s-lists, called <tt>subst</tt>, <em>and</em> a function for
+    substituting symbols in symbol expressions, called, say,
+    <tt>subst-symbol-expr</tt>.  Because each data type is
+    defined in terms of the other, these functions will call
+    one another.  This technique is called <b>mutual recursion</b>,
+    because the recursion involves two functions that call one
+    another, working together to create a solution. </p>
+
+<p> To begin, let's suppose that <tt>subst-symbol-expr</tt>
+    exists and works.  The "else" clause of our main decision
+    in <tt>subst</tt> becomes quite easy to write:
+    </p><ul>
+    <li> substitute <tt>new</tt> for <tt>old</tt> in the
+         <tt>first</tt> of the s-list using
+         <tt>subst-symbol-expr</tt>, </li>
+    <li> substitute <tt>new</tt> for <tt>old</tt> in the
+         <tt>rest</tt> of the s-list using <tt>subst</tt>, and </li>
+    <li> make a new pair from the results using <tt>cons</tt>.  </li>
+    </ul>  <p></p>
+
+<p> The definition of <tt>subst</tt> becomes:
+</p><pre>   (define subst
+      (lambda (new old slist) 
+         (if (null? slist)
+             '()
+             (cons (subst-symbol-expr new old (first slist))
+                   (subst new old (rest slist)))   )))
+</pre> <p></p>
+
+<p> Isn't that <em>much</em> clearer?
+
+</p><p> Now we have to write <tt>subst-symbol-expr</tt>.  Using
+    structural recursion, the definition of this function follows
+    the BNF definition of the data type it processes, a symbol
+    expression.  The BNF lists two alternatives for a symbol
+    expression: it is either a symbol, or it is an s-list.  So: 
+</p><pre>    (define subst-symbol-expr
+       (lambda (new old symexp)
+          (if (symbol? symexp)
+              ;; handle a symbol
+              ;; handle an slist
+              )))
+</pre> <p></p>
+
+<p> If the symbol expression is a symbol, then we decide whether to
+    replace it with the new symbol:
+</p><pre>    (define subst-symbol-expr
+      (lambda (new old symexp) 
+        (if (symbol? symexp)
+            (if (eq? symexp old)
+                new
+                symexp)
+            ;; handle an slist
+        )))
+</pre> <p></p>
+
+<p> If not, then it is an s-list.  But we have already written a
+    function that can make substitutions in an s-list:
+    <tt>subst</tt>!  Call it:
+</p><pre>    (define subst-symbol-expr
+      (lambda (new old symexp) 
+        (if (symbol? symexp)
+            (if (eq? symexp old)
+                new
+                symexp)
+            (subst new old symexp))))
+</pre> <p></p>
+
+<p> That's pretty clear, too.  </p>
+
+<p> Our solution now consists of two relatively small, relatively
+    simple functions that work together to solve the problem.  </p>
+
+<p> What are the advantages of our new program?
+    </p><ul>
+    <li> It now follows the BNF definition of the s-list data type
+         more closely, which defined two types of expression.
+         This makes the code easier to read and modify, because
+         readers can easily find the parts of the program they
+         care about from the parts of the data definition.  </li>
+    <br>
+    <li> We have simplified the definition considerably.  Nested
+         <tt>if</tt>s can be hard to understand and trace, even
+         for experienced programmers using good programming style.
+         We now have only one nested <tt>if</tt>, and it is
+         simpler the nesting we did in our first function.  </li>
+    <br>
+    <li> We don't repeat code, in particular the three uses of
+         <tt>subst</tt> on the <tt>rest</tt> of the s-list, or
+         multiple calls to <tt>first</tt> and <tt>rest</tt>.  </li>
+    <br>
+    <li> Defining separate functions for each non-terminal in the
+         BNF breaks the <i>programming</i> process into manageable
+         parts and allows us to concentrate our efforts on one
+         thing at a time.  </li>
+    </ul> <p></p>
+
+<p> Mutual recursion will be our technique of choice whenever we
+    have a multiple-part data definition.
+<br>
+</p><hr>
+
+     <a name="count-occurrences"></a>
+<h3> An Exercise: <tt>count-occurrences</tt> </h3>
+
+    <blockquote><b>
+    Use mutual recursion to implement
+    <tt>(count-occurrences s slist)</tt>, which counts how many
+    times the symbol <tt>s</tt> occurs in <tt>slist</tt>.
+    </b></blockquote>
+
+<p> For example:
+</p><pre>   &gt; (count-occurrences 'a '(a b c))
+   1
+
+   &gt; (count-occurrences
+            'a '(((a be) a ((si be a) be (a be))) (be g (a si be))))
+   5
+</pre> <p></p>
+
+<!-- BLOCK THE SOLUTION IN CLASS, FOR THE EXERCISE -->
+
+<p> The first step is to examine the BNF:
+</p><pre>               &lt;s-list&gt; ::= ()
+                          | (&lt;symbol-expression&gt; . &lt;s-list&gt;)
+
+    &lt;symbol-expression&gt; ::= &lt;symbol&gt; 
+                          | &lt;s-list&gt; 
+</pre> <p></p>
+
+<p> From the BNF, we expect to write two functions, one that counts
+    the symbol in an s-list and one that counts the symbol in a symbol
+    expression.  </p>
+
+<p> We start with the pattern suggested by the BNF for s-list:
+</p><pre>    (define count-occurrences 
+       (lambda (s slist)
+          (if (null? slist)
+              ...;; slist is empty
+              ...;; slist is a pair
+              )))
+</pre> <p></p>
+
+<p> We can conclude without much effort that a symbol occurs in
+    an empty list 0 times.  In a non-empty list, the number of
+    times it occurs is equal to the number of times it occurs
+    in the <tt>first</tt> of the list <b>plus</b> the number of
+    times it occurs in the <tt>rest</tt> of the list.  </p>
+
+<p> Because this is a mutually recursive specification and
+    function, we will assume that a function named
+    <tt>count-occurrences-sym-expr</tt> exists, so that we can
+    use it to count the number of occurrences in the <tt>car</tt>
+    of the pair:
+</p><pre>    (define count-occurrences 
+       (lambda (s slist)
+          (if (null? slist)
+              0
+              (+ (count-occurrences-sym-expr s (first slist))
+                 (count-occurrences s (rest slist)))  )))
+</pre> <p></p>
+
+<p> Now, we define <tt>count-occurrences-sym-expr</tt>.  The BNF
+    description for symbol expressions suggests the following
+    pattern:
+</p><pre>    (define count-occurrences-sym-expr
+       (lambda (s sym-expr)
+          (if (symbol? sym-expr)
+              ...;; sym-expr is a symbol
+              ...;; sym-expr is an slist
+              )))
+</pre> <p></p>
+
+<p> If the symbol expression is a symbol, then we need to determine
+    whether it is the symbol we're counting or not and return the
+    appropriate value, 0 or 1.  If it is an s-list, then we have a
+    function for counting occurrences -- <tt>count-occurrences</tt>:
+</p><pre>    (define count-occurrences-sym-expr
+       (lambda (s sym-expr)
+          (if (symbol? sym-expr)
+              (if (eq? s sym-expr) 1 0)           ;; sym-expr is a symbol
+              (count-occurrences s sym-expr) )))  ;; sym-expr is an slist
+</pre> <p></p>
+
+<p> And we are done!  </p>
+<br>
+<hr>
+
+     <a name="program-derivation"></a>
+<h3> Increasing Efficiency Through Program Derivation </h3>
+
+<p> Our original definition of <tt>subst</tt> was somewhat confusing
+    -- to read <em>and</em> to write.  We just saw that following
+    the BNF can make the program easier to program and easier to
+    understand.  This ease comes, however, at the cost of extra
+    function calls.  </p>
+
+<p> How so?  Notice that we now make two function calls each time
+    the <tt>first</tt> of the s-list contains an s-list: one to
+    <tt>subst-symbol-expr</tt>, and then a return call to
+    <tt>subst</tt>.  Such "double dispatch" can be expensive on a
+    large dataset.  </p>
+
+<p> Sometimes, the run-time costs introduced by mutual recursion
+    outweigh the program-time and read-time benefits of the
+    separate functions.  Can we modify our definition without
+    losing too many of its benefits?  </p>
+
+<p> We can use Racket's
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/readings/substitution-model.html">
+       substitution model</a>
+    to get back to a single function.  Our solution currently
+    looks like this:
+</p><pre>    (define subst
+       (lambda (new old slist)
+          (if (null? slist)
+              '()
+              (cons (subst-symbol-expr new old (first slist))
+                    (subst new old (rest slist))))))
+
+    (define subst-symbol-expr
+       (lambda (new old symexp)
+          (if (symbol? symexp)
+              (if (eq? symexp old) new symexp)
+              (subst new old symexp))))
+</pre> <p></p>
+
+<p> We can substitute the definition of <tt>subst-symbol-expr</tt>
+    into <tt>subst</tt>, using the standard rules from the
+    substitution model.  This is exactly what the Racket
+    interpreter will do at run-time.  First, we substitute the
+    <tt>lambda</tt> in place of the name:
+</p><pre>    (define subst
+       (lambda (new old slist) 
+          (if (null? slist)
+              '()
+              (cons ( (lambda (new old symexp)          ;; 
+	                 (if (symbol? symexp)           ;; Here
+	                     (if (eq? symexp old)       ;; is
+                                 new                    ;; the
+                                 symexp)                ;; first
+		             (subst new old se)))       ;; substitution.
+                      new old (first slist))
+                    (subst new old (rest slist))))))
+</pre> <p></p>
+
+<p> Next, we replace the application of the <tt>lambda</tt> with
+    the body of the <tt>lambda</tt>, substituting the arguments
+    for the corresponding formal parameters: <tt>new</tt> for
+    <tt>new</tt>, <tt>old</tt> for <tt>old</tt>, and
+    <tt>(first slist)</tt> for <tt>symexp</tt>:
+</p><pre>   (define subst
+      (lambda (new old slist) 
+         (if (null? slist)
+             '()
+             (cons (if (symbol? (first slist))         ;;
+                       (if (eq? (first slist) old)     ;; Here is
+                           new                         ;; the second
+                           (first slist))              ;; substitution.
+                       (subst new old (first slist)))  ;;
+                   (subst new old (rest slist))))))
+</pre> <p></p>
+
+<p> The result is a single function that behaves exactly like the
+    two original functions.  After all, all we did was to derive
+    by hand the same result that the Racket evaluator will produce.
+    So, provided that we made no errors in our derivation, the
+    resulting function has the same functionality.  However, the
+    new version is more efficient, because it eliminates the extra
+    function calls.  We hope that it is nearly as readable as the
+    two-function version.  </p>
+
+<p> Take a closer look.  The derived function is <em><b>not</b>
+    like</em>
+    <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session10.html#subst-v1">
+       the single-function solution we wrote earlier</a>.
+    That function repeated the expression
+    <tt>(subst new old (cdr slist))</tt> several times, because we
+    worked through the details of every possible case.  Using mutual
+    recursion followed by program derivation -- letting Racket's
+    substitution model do some of the work for us -- results in a
+    program with a single <tt>(subst new old (rest slist))</tt>.  </p>
+
+<p> We can do this in Racket because the <tt>if</tt> construct is
+    an expression that returns a value, not a statement.  In many
+    languages, <tt>if</tt> is a statement and returns no value.  A
+    few, including Java and C++, have a "computed if" expression
+    that may let us do something like this.  In Java, a "computed
+    if" is written as
+</p><pre>     &lt;test&gt; ? &lt;then-value&gt; : &lt;else-value&gt;
+</pre>  <p></p>
+
+<p> C++ has a concept that is similar to program derivation, the
+    <b>in-lining</b> of member functions.  The difference, though,
+    is that its is implemented by the compiler.  When we declare
+    a class member function <tt>inline</tt>, the compiler tries
+    to replace all calls to the function with equivalent code
+    from the body of the function.  </p>
+
+<p> For example, we may well use an accessor method <tt>x()</tt>
+    frequently when interacting with an object that has an
+    x-coordinate.  By declaring the <tt>x()</tt> method as
+    <tt>inline</tt>, the compiler will replace the method call with
+    the equivalent code from the body of the function.
+
+</p><p> This enables the programmer to eliminate the overhead of extra
+    function calls <em>at run time</em>, without obscuring the
+    readability and design of our class.  Program derivation works
+    like inlining, but it is a technique used by <em>programmers</em>
+    to modify their code.  (I can certainly imagine having a
+    Racket compiler implementing program derivation automatically,
+    thus saving the programmer the effort and risk of error!)  </p>
+
+<p> We will use the program derivation technique occasionally to
+    simplify the result of mutual recursion, and any other
+    technique that introduces unwanted function calls that create
+    undesirable inefficiency at run-time -- but only when the cost
+    of the extra function calls outweighs the benefits of separate
+    functions.  </p>
+<br>
+<hr>
+
+<h3> An Exercise Applying Program Derivation </h3>
+
+<p> Use program derivation to eliminate the
+    <tt>count-occurrences-symbol-expr</tt> function.  Do you like
+    the result?  </p>
+<br>
+<hr>
+
+<h3> Wrap Up </h3>
+
+<ul>
+<li> Reading -- Review the lecture notes.  Try to write the code
+     again from scratch.  Review the code.  Pay special attention
+     to the section named
+     <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/sessions/session10.html#program-derivation">
+        Increasing Efficiency Through Program Derivation</a>,
+     which we will cover next time.
+     <br><br>
+     Read through Chapter 5 of <em>The Little Schemer</em>.  </li>
+<br>
+<li> <a href="http://www.cs.uni.edu//~wallingf/teaching/cs3540/homework/homework04.html">
+        Homework 4</a>
+     is available and is due next session.
+     <!--A HREF="../homework/homework05.html"-->
+        Homework 5
+     will be available then.  </li>
+</ul>
+<br>
+<hr>
+
+<center>
+<address>
+   <a href="http://www.cs.uni.edu//~wallingf/teaching/">Eugene Wallingford</a> .....
+   <a href="mailto:wallingf@cs.uni.edu">wallingf@cs.uni.edu</a> .....
+   February 18, 2019
+</address>
+</center>
+
+<hr>
+
+
+
+</body></html>
