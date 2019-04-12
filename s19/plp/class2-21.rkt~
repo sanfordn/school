@@ -1,5 +1,4 @@
 #lang racket
-;actual
 (define map-nlist
   (lambda (f nlist)
     (if (null? nlist)
@@ -12,6 +11,3 @@
     (if (number? numexp)
         (f numexp)
         (map-nlist f numexp))))
-
-;try
-
