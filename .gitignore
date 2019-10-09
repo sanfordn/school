@@ -117,4 +117,15 @@ dmypy.json
 # Ignore all local history of files
 .history
 
-# End of https://www.gitignore.io/api/python,visualstudiocode
+
+# Created by https://www.gitignore.io/api/ada
+# Edit at https://www.gitignore.io/?templates=ada
+
+### Ada ###
+# Object file
+*.o
+
+# Ada Library Information
+*.ali
+
+# End of https://www.gitignore.io/api/python,visualstudiocode,ada
